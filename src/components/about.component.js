@@ -8,7 +8,7 @@ class About extends Component {
           <div>
               Welcome to the About Component!
           </div>
-      )
+      );
   }
 
 }

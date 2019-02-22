@@ -3,7 +3,6 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
-
 import Calculator from './components/calculator.component';
 import About from './components/about.component';
 
