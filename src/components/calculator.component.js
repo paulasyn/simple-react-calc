@@ -10,6 +10,7 @@ import spacing from '@material-ui/core/styles/spacing';
 import Display from './display.component';
 import update from 'immutability-helper';
 import push from 'immutability-helper';
+import mathjs from 'mathjs';
 
 
 const styles = {
@@ -55,12 +56,12 @@ class Calculator extends Component {
                 })
                 break
             
-            case 'eqauls':
+            case '=':
                 this.calculateOperations()
                 break
             
             default: 
-            // fix this
+            
                 const newOperations = update(this.state.operations, {
                     $push: [e.currentTarget.value],
                 });
@@ -71,10 +72,25 @@ class Calculator extends Component {
                 
         }
     }
+
+    calculateOperations(e) {
+        let result = this.state.operations.join('')
+        if(result) {
+            result = mathjs.eval(result)
+            result = mathjs.format(result, {precision: 14})
+            result = String(result)
+            this.setState({
+                operations: [result],
+            })
+        }
+
+    }
+
+   // TODO:  validate expressions , make sure there aren't times where you have expressions with subsequent operations after each other, no extra decimals in a number, 
     render() {
         return (
             <div>
-                 <Paper zdepth={3} style={styles.paperLeft}>
+            <Paper zdepth={3} style={styles.paperLeft}>
             <h4>Display Component</h4>
             <Display data={this.state.operations} />
             </Paper>
@@ -111,6 +127,7 @@ class Calculator extends Component {
                 size="large"
                 styles={styles.Button}
                 value="9"
+                onClick = {this.handleClick}
                 >
                 9
                 </Button>
@@ -124,6 +141,7 @@ class Calculator extends Component {
                 size="large"
                 styles={styles.Button}
                 value="4"
+                onClick = {this.handleClick}
                 >
                 4
                 </Button>
@@ -135,6 +153,7 @@ class Calculator extends Component {
                 size="large"
                 styles={styles.Button}
                 value="5"
+                onClick = {this.handleClick}
                 >
                 5
                 </Button>
@@ -146,6 +165,7 @@ class Calculator extends Component {
                 size="large"
                 styles={styles.Button}
                 value="6"
+                onClick = {this.handleClick}
                 >
                 6
                 </Button>
@@ -159,6 +179,7 @@ class Calculator extends Component {
                 size="large"
                 styles={styles.Button}
                 value="1"
+                onClick = {this.handleClick}
                 >
                 1
                 </Button>
@@ -170,6 +191,7 @@ class Calculator extends Component {
                 size="large"
                 styles={styles.Button}
                 value="2"
+                onClick = {this.handleClick}
                 >
                 2
                 </Button>
@@ -181,6 +203,7 @@ class Calculator extends Component {
                 size="large"
                 styles={styles.Button}
                 value="3"
+                onClick = {this.handleClick}
                 >
                 3
                 </Button>
@@ -193,9 +216,86 @@ class Calculator extends Component {
                 variant='contained'
                 size="large"
                 styles={styles.Button}
-                value="equal"
+                value="="
+                onClick = {this.handleClick }
                 >
                 =
+                </Button>
+                
+                <Button
+                type='input'
+                color='primary'
+                variant='contained'
+                size="large"
+                styles={styles.Button}
+                value="clear"
+                onClick = {this.handleClick}
+                >
+                C
+                </Button>
+
+                <Button
+                type='input'
+                color='primary'
+                variant='contained'
+                size="large"
+                styles={styles.Button}
+                value="."
+                onClick = {this.handleClick}
+                >
+                .
+                </Button>
+
+                <br></br>
+
+                <Button
+                type='input'
+                color='primary'
+                variant='contained'
+                size="large"
+                styles={styles.Button}
+                value="+"
+                onClick = {this.handleClick}
+                >
+                +
+                </Button>
+
+                
+
+                <Button
+                type='input'
+                color='primary'
+                variant='contained'
+                size="large"
+                styles={styles.Button}
+                value="-"
+                onClick = {this.handleClick}
+                >
+                -
+                </Button>
+
+                <Button
+                type='input'
+                color='primary'
+                variant='contained'
+                size="large"
+                styles={styles.Button}
+                value="*"
+                onClick = {this.handleClick}
+                >
+                *
+                </Button>
+
+                <Button
+                type='input'
+                color='primary'
+                variant='contained'
+                size="large"
+                styles={styles.Button}
+                value="/"
+                onClick = {this.handleClick}
+                >
+                /
                 </Button>
 
                 
