@@ -1,7 +1,7 @@
 import './styles.css'
 
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Buttons from "./components/Buttons";
 import Input from "./components/Input";
 import Operators from "./types/operations";
