@@ -4,6 +4,8 @@ import './styles.css'
 import { useState } from "react";
 import Buttons from "./components/Buttons";
 import Input from "./components/Input";
+import Operators from "./types/operations";
+
 
 export default function Calculator() {
     const [input, setInput] = useState<string | null>(null);
@@ -15,15 +17,130 @@ export default function Calculator() {
     const [prevSymbol, setPrevSymbol] = useState<string | null>(null);
     const [equalSignPressed, setEqualSignPressed] = useState<boolean>(false);
 
+    const currentInput: string | null = useMemo<string | null>(
+        () => (showOldInput ? oldIput: input),
+        [input, oldIput, showOldInput]
+    )
+
+    const operations: Operators = {
+        "+": (n1, n2) => n1 + n2,
+        "-": (n1, n2) => n1 - n2,
+        "✕": (n1, n2) => n1 * n2,
+        "÷": (n1, n2) => n1 / n2,
+        "%": (_n1, n2) => n2 / 100,
+        "+/-": (_n1, n2) => n2 * -1,
+    };
+
+    function calculate(
+        buffer: number,
+        currentTotal: number,
+        symbol: string
+    ): number {
+        return operations[symbol](currentTotal, buffer);
+    }
 
     function storeNumToScreen(num: string){
         setInput(prev => prev === '0' || prev === null || equalSignPressed && input?.charAt(0) !== '.'? num: prev + num)
     }
 
     function handleSymbol(symbol: string){
-        // TODO: Implement logic to handle different button types (symbol, numbers)
+        switch(symbol) {
+            case 'C': {
+            // clear 
+                clear()
+                break;
+            }
+            case '=': {
+            // equal sign pressed
+                setEqualSignPressed(true)
+                if (input === null || prevSymbol === null) return;
+                const finalTotal: number = calculate(
+                    parseFloat(input), 
+                    total,
+                    prevSymbol
+                );
+                if (input === '0' && prevSymbol === '÷') {
+                    setHasError(true)
+                    return
+                }
+                setInput(finalTotal.toString());
+                setPrevSymbol(null);
+                if (showOldInput) setShowOldInput(false);
+                break;
+            }
+            case '%': {
+                break;
+            }
+            case '+/-': {
+            // negatives and positives
+                if (input === null) {
+                    return;
+                }
+                const changedValue: number = calculate(
+                    parseFloat(input),
+                    total,
+                    symbol
+                );
+                setInput(changedValue.toString());
+                break;
+            }
+            case '.': {
+            // decimals
+                if (!input?.includes('.')) {
+                    storeNumToScreen(symbol);
+                }
+                break;
+            }
+            case '+': {
+            // todo 
+                break;
+            }
+            case '-': {
+            // todo 
+                break;
+            }
+            case 'x': {
+            // todo 
+                break;    
+            }
+            case '÷': {
+            // todo 
+                if (input === null || prevSymbol === null) {
+                    if (prevSymbol === null) {
+                        if (input !== null) setTotal(parseFloat(input));
+                        prepareNextOperation(symbol);
+                    }
+                    return;
+                }
+                const newTotal: number = calculate(
+                    parseFloat(input),
+                    total,
+                    prevSymbol
+                );
+                setTotal(newTotal);
+                prepareNextOperation(symbol);
+                break;
+            }
+            default:
+                break;
+        }
     }
     
+    function clear() {
+        setInput(null);
+        setOldInput(null);
+        setShowOldInput(false);
+        setTotal(0);
+        setPrevSymbol(null);
+        setHasError(false);
+    }
+    function prepareNextOperation(symbol: string) {
+        setPrevSymbol(symbol);
+        setShowOldInput(true);
+        setOldInput(input);
+        setInput(null);
+    }
+
     function handleButtonPress(value: string): void {
         if (showOldInput) {
             setShowOldInput(false);
@@ -44,7 +161,7 @@ export default function Calculator() {
     }
     return (
         <div className='calculator-container'>
-            <Input error={hasError} input={null ?? '0'} />
+            <Input error={hasError} input={currentInput ?? '0'} />
             <Buttons handleOnPress={handleButtonPress} />
         </div>
     );
