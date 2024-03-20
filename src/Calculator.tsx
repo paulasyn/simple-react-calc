@@ -1,35 +1,40 @@
-import './styles.css'
-
+import './styles.css';
 
 import { useState, useMemo } from "react";
 import Buttons from "./components/Buttons";
 import Input from "./components/Input";
-import Operators from "./types/operations";
-
+import { Operators } from "./types/operations";
 
 export default function Calculator() {
     const [input, setInput] = useState<string | null>(null);
     const [total, setTotal] = useState<number>(0);
     const [hasError, setHasError] = useState<boolean>(false);
-
-    const [oldIput, setOldInput] = useState<string | null>(null);
+    const [oldInput, setOldInput] = useState<string | null>(null);
     const [showOldInput, setShowOldInput] = useState<boolean>(false);
     const [prevSymbol, setPrevSymbol] = useState<string | null>(null);
     const [equalSignPressed, setEqualSignPressed] = useState<boolean>(false);
-
     const currentInput: string | null = useMemo<string | null>(
-        () => (showOldInput ? oldIput: input),
-        [input, oldIput, showOldInput]
-    )
+        () => (showOldInput ? oldInput: input),
+        [input, showOldInput]
+    );
 
     const operations: Operators = {
         "+": (n1, n2) => n1 + n2,
         "-": (n1, n2) => n1 - n2,
-        "✕": (n1, n2) => n1 * n2,
+        "x": (n1, n2) => n1 * n2,
         "÷": (n1, n2) => n1 / n2,
         "%": (_n1, n2) => n2 / 100,
         "+/-": (_n1, n2) => n2 * -1,
     };
+
+    function clear() {
+        setInput(null);
+        setOldInput(null);
+        setShowOldInput(false);
+        setTotal(0);
+        setPrevSymbol(null);
+        setHasError(false);
+    }
 
     function calculate(
         buffer: number,
@@ -39,15 +44,11 @@ export default function Calculator() {
         return operations[symbol](currentTotal, buffer);
     }
 
-    function storeNumToScreen(num: string){
-        setInput(prev => prev === '0' || prev === null || equalSignPressed && input?.charAt(0) !== '.'? num: prev + num)
-    }
-
     function handleSymbol(symbol: string){
         switch(symbol) {
             case 'C': {
             // clear 
-                clear()
+                clear();
                 break;
             }
             case '=': {
@@ -91,20 +92,10 @@ export default function Calculator() {
                 }
                 break;
             }
-            case '+': {
-            // todo 
-                break;
-            }
-            case '-': {
-            // todo 
-                break;
-            }
-            case 'x': {
-            // todo 
-                break;    
-            }
+            case '+':
+            case '-': 
+            case 'x': 
             case '÷': {
-            // todo 
                 if (input === null || prevSymbol === null) {
                     if (prevSymbol === null) {
                         if (input !== null) setTotal(parseFloat(input));
@@ -125,15 +116,12 @@ export default function Calculator() {
                 break;
         }
     }
-    
-    function clear() {
-        setInput(null);
-        setOldInput(null);
-        setShowOldInput(false);
-        setTotal(0);
-        setPrevSymbol(null);
-        setHasError(false);
+
+    function storeNumToScreen(num: string){
+        setInput(prev => prev === '0' || prev === null || equalSignPressed && input?.charAt(0) !== '.' ? num: prev + num);
     }
+    
+    
     function prepareNextOperation(symbol: string) {
         setPrevSymbol(symbol);
         setShowOldInput(true);
