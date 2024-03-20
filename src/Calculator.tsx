@@ -69,9 +69,7 @@ export default function Calculator() {
                 if (showOldInput) setShowOldInput(false);
                 break;
             }
-            case '%': {
-                break;
-            }
+            case '%': 
             case '+/-': {
             // negatives and positives
                 if (input === null) {
